@@ -67,6 +67,8 @@ spec:
       - name: zookeeper
         image: "{{- .Values.docker.registry.name -}}{{- .Values.zookeeper.imageName -}}:{{- .Values.zookeeper.imageTag -}}"
         imagePullPolicy: {{ .Values.zookeeper.imagePullPolicy | quote }}
+        securityContext:
+          readOnlyRootFilesystem: true
         command: ["/bin/bash", "-c", "hostname -s | awk -F '-' '{print $NF}'> {{ .Values.zookeeper.config.dataDir }}/myid; cat {{ .Values.zookeeper.config.dataDir }}/myid; cat /conf/zoo.cfg; zkServer.sh start-foreground"]
         ports:
         - name: zookeeper

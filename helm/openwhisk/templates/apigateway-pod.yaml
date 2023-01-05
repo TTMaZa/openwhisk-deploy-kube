@@ -51,6 +51,8 @@ spec:
         - name: apigateway
           imagePullPolicy: {{ .Values.apigw.imagePullPolicy | quote }}
           image: "{{- .Values.docker.registry.name -}}{{- .Values.apigw.imageName -}}:{{- .Values.apigw.imageTag -}}"
+          securityContext:
+            readOnlyRootFilesystem: true
           ports:
           - name: mgmt
             containerPort: {{ .Values.apigw.mgmtPort }}

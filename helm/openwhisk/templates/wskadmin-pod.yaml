@@ -28,6 +28,8 @@ spec:
   containers:
   - name: wskadmin
     image: "{{- .Values.docker.registry.name -}}{{- .Values.utility.imageName -}}:{{- .Values.utility.imageTag -}}"
+    securityContext:
+      readOnlyRootFilesystem: true
     imagePullPolicy: {{ .Values.utility.imagePullPolicy | quote }}
     command: ["/bin/bash", "-c", "tail -f /dev/null"]
     env:

@@ -61,6 +61,8 @@ spec:
       - name: alarmprovider
         image: "{{- .Values.docker.registry.name -}}{{- .Values.providers.alarm.imageName -}}:{{- .Values.providers.alarm.imageTag -}}"
         imagePullPolicy: {{ .Values.providers.alarm.imagePullPolicy | quote }}
+        securityContext:
+          readOnlyRootFilesystem: true
         ports:
         - name: alarmprovider
           containerPort: {{ .Values.providers.alarm.apiPort }}

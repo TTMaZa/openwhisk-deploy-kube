@@ -39,6 +39,10 @@ spec:
       affinity:
 {{ include "openwhisk.affinity.provider" . | indent 8 }}
 {{- end }}
+      volumes:
+      - name: tmp
+        emptyDir: {}
+
       initContainers:
       # Wait for a controller to be up (which implies couchdb and kafka are up as well).
 {{ include "openwhisk.readiness.waitForController" . | indent 6 }}
@@ -47,9 +51,14 @@ spec:
       - name: kafkaprovider
         image: "{{- .Values.docker.registry.name -}}{{- .Values.providers.kafka.imageName -}}:{{- .Values.providers.kafka.imageTag -}}"
         imagePullPolicy: {{ .Values.providers.kafka.imagePullPolicy | quote }}
+        securityContext:
+          readOnlyRootFilesystem: true
         ports:
         - name: kafkaprovider
           containerPort: {{ .Values.providers.kafka.apiPort }}
+        volumeMounts:
+        - name: tmp
+          mountPath: /tmp
         env:
         {{- if .Values.providers.db.external }}
         # Config database using the external instance

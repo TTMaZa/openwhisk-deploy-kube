@@ -56,6 +56,10 @@ spec:
         persistentVolumeClaim:
           claimName: "{{ .Release.Name }}-kafka-pvc"
 {{- end }}
+      - name: opt-kafka-config
+        emptyDir: {}
+      - name: opt-kafka-logs
+        emptyDir: {}
 
       initContainers:
 {{ include "openwhisk.readiness.waitForZookeeper" . | indent 6 }}
@@ -63,6 +67,8 @@ spec:
       containers:
       - name: kafka
         image: "{{- .Values.docker.registry.name -}}{{- .Values.kafka.imageName -}}:{{- .Values.kafka.imageTag -}}"
+        securityContext:
+          readOnlyRootFilesystem: true
         imagePullPolicy: {{ .Values.kafka.imagePullPolicy | quote }}
         command: ["/bin/bash", "-c", "export KAFKA_BROKER_ID=`hostname | awk -F '-' '{print $NF}'`; /usr/bin/start-kafka.sh"]
 {{- if .Values.k8s.persistence.enabled }}
@@ -70,6 +76,10 @@ spec:
         - mountPath: /kafka
           name: "{{ .Release.Name }}-kafka-pvc"
 {{- end }}
+        - name: opt-kafka-config
+          mountPath: /opt/kafka/config/
+        - name: opt-kafka-logs
+          mountPath: /opt/kafka/logs/
         ports:
         - containerPort: {{ .Values.kafka.port }}
           name: kafka

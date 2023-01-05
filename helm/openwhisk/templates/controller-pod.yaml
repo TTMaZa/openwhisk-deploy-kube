@@ -79,8 +79,9 @@ spec:
       - name: controller
         imagePullPolicy: {{ .Values.controller.imagePullPolicy | quote }}
         image: "{{- .Values.docker.registry.name -}}{{- .Values.controller.imageName -}}:{{- .Values.controller.imageTag -}}"
-{{- if .Values.controller.lean }}
         securityContext:
+          readOnlyRootFilesystem: true
+{{- if .Values.controller.lean }}
           privileged: true
 {{- end }}
         command: ["/bin/bash", "-c", "/init.sh `hostname | awk -F '-' '{print $NF}'`"]

@@ -77,6 +77,8 @@ spec:
       containers:
         - name: redis
           image: "{{- .Values.docker.registry.name -}}{{- .Values.redis.imageName -}}:{{- .Values.redis.imageTag -}}"
+          securityContext:
+            readOnlyRootFilesystem: true
           imagePullPolicy: {{ .Values.redis.imagePullPolicy | quote }}
 {{- if .Values.k8s.persistence.enabled }}
           volumeMounts:

@@ -63,6 +63,10 @@ spec:
           name: {{ .Release.Name }}-nginx
       - name: logs
         emptyDir: {}
+      - name: var-cache
+        emptyDir: {}
+      - name: var-run
+        emptyDir: {}
 {{ include "openwhisk.docker.imagePullSecrets" . | indent 6 }}
       initContainers:
       # Wait for a controller to be up (which implies kafka, zookeeper, couchdb are all up as well).
@@ -70,6 +74,8 @@ spec:
       containers:
       - name: nginx
         image: "{{- .Values.docker.registry.name -}}{{- .Values.nginx.imageName -}}:{{- .Values.nginx.imageTag -}}"
+        securityContext:
+          readOnlyRootFilesystem: true
         imagePullPolicy: {{ .Values.nginx.imagePullPolicy | quote }}
         ports:
         - name: http
@@ -86,3 +92,7 @@ spec:
         {{- end }}
         - name: logs
           mountPath: "/logs"
+        - name: var-cache
+          mountPath: /var/cache/nginx
+        - name: var-run
+          mountPath: /var/run
